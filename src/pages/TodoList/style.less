@@ -1,0 +1,55 @@
+.checkboxRoot {
+  display: inline;
+}
+
+.checkboxRound {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0px;
+  cursor: pointer;
+}
+.icon svg {
+  fill: #767678;
+}
+.icon.blue svg {
+  fill: #465efc;
+}
+.icon.spinner {
+  display: block;
+  width: 14px;
+  height: 14px;
+  -webkit-animation: rotate 0.8s linear infinite;
+  animation: rotate 0.8s linear infinite;
+}
+.svgIcon {
+  display: inline-block;
+  font-size: 0;
+}
+
+.ms-Icon {
+  display: inline-block;
+  font-weight: normal;
+  font-family: 'wundercon';
+  font-style: normal;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  speak: none;
+}
+
+.checkboxRound .checkBox-hover.checkbox-completed-outline-20,
+.checkboxRound .checkBox-hover.checkbox-completed-outline-16 {
+  margin-top: -12px;
+  margin-left: -12px;
+}
+
+.checkboxRound .checkBox-hover {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  transition: opacity 100ms;
+}
