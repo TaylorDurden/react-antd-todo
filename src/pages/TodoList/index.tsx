@@ -1,22 +1,20 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Input, Drawer, Tag, Space, Checkbox } from 'antd';
+import {  StarOutlined, StarFilled, PlusOutlined } from '@ant-design/icons';
+import { Button, message, Input, Space, Image, Row, Col, Popover, Divider } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import type { ReactText } from 'react';
 import { useIntl, FormattedMessage, connect } from 'umi';
 import type { Dispatch } from 'umi';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
-import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
-import ProDescriptions from '@ant-design/pro-descriptions';
 import ProList from '@ant-design/pro-list';
 import type { FormValueType } from './components/UpdateForm';
-import UpdateForm from './components/UpdateForm';
-import { rule, addRule, updateRule, removeRule } from '@/services/ant-design-pro/api';
+import { addRule, updateRule, removeRule } from '@/services/ant-design-pro/api';
 import type { StateType } from './model';
 import styles from './style.less';
-import { DownOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import icon_checked from '../../assets/icons8-checked-64.png';
+import icon_circle from '../../assets/icons8-circle-50.png';
+import type { Task } from './data.d';
+import classNames from 'classnames';
 
 interface TodoListProps {
   todoList: StateType;
@@ -110,19 +108,6 @@ const TodoList: React.FC<TodoListProps> = (props) => {
   const rowSelection = {
     selectedRowKeys,
     onChange: (keys: ReactText[]) => setSelectedRowKeys(keys),
-    renderCell: (checked, record, index, originNode) => (
-      // <div className={styles.checkboxRoot}>
-      //   <span data-is-focusable="true" className="checkboxRound" aria-label="标记为已完成" role="checkbox" aria-checked="false" >
-      //   <i className="icon svgIcon ms-Icon checkbox-20">
-      //     <svg focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 20c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8m0-17c-4.963 0-9 4.037-9 9s4.037 9 9 9 9-4.037 9-9-4.037-9-9-9"></path></svg>
-      //   </i>
-      //   <i className="icon svgIcon ms-Icon checkbox-completed-outline-20 checkBox-hover">
-      //     <svg focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill-rule="evenodd"><path d="M12 20c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8m0-17c-4.963 0-9 4.037-9 9s4.037 9 9 9 9-4.037 9-9-4.037-9-9-9"></path><path d="M10.9902 13.3027l-2.487-2.51-.71.704 3.193 3.224 5.221-5.221-.707-.707z"></path></g></svg>
-      //   </i>
-      // </span>
-      // </div>
-      <CheckCircleOutlined />
-    )
   };
 
   useEffect(() => {
@@ -254,66 +239,63 @@ const TodoList: React.FC<TodoListProps> = (props) => {
     },
   ];
 
+  const handleMouseMove = (event: any) => {
+    console.log(event);
+    // const imgElment = event.target;
+    // if(imgElment.className.indexOf('checkbox_checked') !== -1){
+    //   // imgElment.className = imgElment.className.replace('checkbox_checked', 'checkbox_circle') 
+
+    // }else{
+    //   imgElment.className = imgElment.className.replace('checkbox_circle', 'checkbox_checked');
+    // }
+  };
+
+
+  // const doneTaskIcon = <Image onMouseMove={handleMouseMove} className={styles.checkbox_checked} width={24} height={24} src={icon_checked} preview={false} />;
+  // const inProgessTaskIcon = <Image onMouseMove={handleMouseMove} className={styles.checkbox_circle} width={24} height={24} src={icon_circle} preview={false} />;
+  const markAsDoneContent = <div>标记为已完成</div>;
+  const markAsInprogessContent = <div>标记为未完成</div>;
+  const doneTaskIcon = <Popover content={markAsInprogessContent} trigger="hover"><div onTouchMove={handleMouseMove}  className={styles.checkbox_checked}></div></Popover>
+  const inProgessTaskIcon =  <Popover content={markAsDoneContent} trigger="hover"><div onTouchMove={handleMouseMove} className={styles.checkbox_circle}></div></Popover>
+  const inputContainerClasses = [styles.baseAdd, styles.baseAdd.addTask].join(' ');
+
   return (
     <PageContainer>
-      <ProList<any>
-        toolBarRender={() => {
-          return [
-            <Button key="add" type="primary">
-              新建
-        </Button>,
-          ];
-        }}
-        onRow={(record: any) => {
-          return {
-            onMouseEnter: () => {
-              console.log(record);
-            },
-            onClick: () => {
-              console.log(record);
-            },
-          };
-        }}
-        rowKey="name"
+      <Input prefix={<PlusOutlined style={{ 'fontSize': '1.2rem', 'color': 'grey', 'margin': '0 14px'}} />} className={styles.input_borderless} placeholder="添加任务" bordered={false} />
+      <ProList<Task>
+        // onRow={(record: any) => {
+        //   return {
+        //     onMouseEnter: () => {
+        //       console.log(record);
+        //     },
+        //     onClick: () => {
+        //       console.log(record);
+        //     },
+        //   };
+        // }}
+        toolBarRender={false}
         loading={loading}
-        rowSelection={rowSelection}
-        headerTitle="基础列表"
-        tooltip="基础列表的配置"
         dataSource={list}
-        showActions="hover"
-        showExtra="hover"
+        split={true}
         metas={{
           title: {
-            dataIndex: 'name',
+            dataIndex: 'title',
           },
           avatar: {
-            dataIndex: 'image',
+            render: (text: React.ReactNode,record: Task,index: number) => (
+              record.status === 'Done' ? 
+              doneTaskIcon
+              : 
+              inProgessTaskIcon
+            )
           },
           description: {
-            dataIndex: 'desc',
-          },
-          subTitle: {
-            render: () => {
-              return (
-                <Space size={0}>
-                  <Tag color="blue">Ant Design</Tag>
-                  <Tag color="#5BD8A6">TechUI</Tag>
-                </Space>
-              );
-            },
+            dataIndex: 'status',
           },
           actions: {
-            render: () => [
-              // <a href={row.html_url} target="_blank" rel="noopener noreferrer" key="link">
-              //   链路
-              // </a>,
-              // <a href={row.html_url} target="_blank" rel="noopener noreferrer" key="warning">
-              //   报警
-              // </a>,
-              // <a href={row.html_url} target="_blank" rel="noopener noreferrer" key="view">
-              //   查看
-              // </a>,
-            ],
+            render: (_, task: Task) => {
+              return <a key="star" style={{'float': 'right'}}>{task.important ? <StarFilled  /> : <StarOutlined />}</a>
+            },
           },
         }}
       />

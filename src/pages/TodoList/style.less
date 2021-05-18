@@ -7,49 +7,67 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   padding: 0px;
   cursor: pointer;
 }
-.icon svg {
-  fill: #767678;
+
+.checkbox_circle {
+  background: url('../../assets/icons8-circle-50.png') no-repeat;
+  background-size: 24px;
+  width: 24px;
+  height: 24px;
 }
-.icon.blue svg {
-  fill: #465efc;
-}
-.icon.spinner {
-  display: block;
-  width: 14px;
-  height: 14px;
-  -webkit-animation: rotate 0.8s linear infinite;
-  animation: rotate 0.8s linear infinite;
-}
-.svgIcon {
-  display: inline-block;
-  font-size: 0;
+.checkbox_circle:hover {
+  background: url('../../assets/icons8-checked-64.png') no-repeat;
+  background-size: 24px;
 }
 
-.ms-Icon {
-  display: inline-block;
-  font-weight: normal;
-  font-family: 'wundercon';
-  font-style: normal;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  speak: none;
+.checkbox_checked {
+  background: url('../../assets/icons8-checked-64.png') no-repeat;
+  background-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+// .checkbox_checked:hover {
+//   background: url('../../assets/icons8-circle-50.png') no-repeat;
+//   background-size: 24px;
+// }
+.input_borderless {
+  background: #fff;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  padding: 16px 12px;
 }
 
-.checkboxRound .checkBox-hover.checkbox-completed-outline-20,
-.checkboxRound .checkBox-hover.checkbox-completed-outline-16 {
-  margin-top: -12px;
-  margin-left: -12px;
+.input_borderless:hover {
+  background: #fff;
+  border-bottom: 1px solid grey;
+  border-radius: 0;
 }
 
-.checkboxRound .checkBox-hover {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  opacity: 0;
-  transition: opacity 100ms;
+.input_borderless:focus {
+  background: #fff;
+  border-bottom: 1px solid grey;
+  border-radius: 0;
+}
+
+.addToTop .baseAdd.addTask {
+  box-shadow: 0 17px 0 -16px #e5e5e5;
+  padding: 0 13px;
+}
+
+.baseAdd.addTask {
+  box-shadow: 0 -17px 0 -16px #e5e5e5;
+  margin: 0 8px;
+  padding: 0 12px;
+}
+.baseAdd {
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }

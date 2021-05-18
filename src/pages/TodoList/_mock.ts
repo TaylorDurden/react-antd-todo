@@ -3,6 +3,7 @@ import type { Task, TaskStep } from './data.d';
 
 const todoListDataSource:Task[] = [
   {
+    id: "11111",
     title: '语雀的天空',
     status: 'InProgress',
     important: false,
@@ -10,6 +11,7 @@ const todoListDataSource:Task[] = [
     startDate: new Date(),
   },
   {
+    id: "22222",
     title: 'Ant Design',
     status: 'InProgress',
     important: false,
@@ -17,15 +19,17 @@ const todoListDataSource:Task[] = [
     startDate: new Date(),
   },
   {
+    id: "33333",
     title: '蚂蚁金服体验科技',
     status: 'InProgress',
-    important: false,
+    important: true,
     steps: [],
     startDate: new Date(),
   },
   {
+    id: "44444",
     title: 'TechUI',
-    status: 'InProgress',
+    status: 'Done',
     important: false,
     steps: [],
     startDate: new Date(),
