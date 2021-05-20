@@ -1,5 +1,5 @@
-import {  StarOutlined, StarFilled, PlusOutlined } from '@ant-design/icons';
-import { Button, message, Input, Space, Image, Row, Col, Popover, Divider } from 'antd';
+import {  StarOutlined, StarFilled, PlusOutlined, ConsoleSqlOutlined } from '@ant-design/icons';
+import { Button, message, Input, Space, Image, Row, Col, Popover, Divider, Form, Badge } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import type { ReactText } from 'react';
 import { useIntl, FormattedMessage, connect } from 'umi';
@@ -15,6 +15,10 @@ import icon_checked from '../../assets/icons8-checked-64.png';
 import icon_circle from '../../assets/icons8-circle-50.png';
 import type { Task } from './data.d';
 import classNames from 'classnames';
+
+const FormItem = Form.Item;
+
+
 
 interface TodoListProps {
   todoList: StateType;
@@ -97,6 +101,7 @@ const TodoList: React.FC<TodoListProps> = (props) => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   /** 分布更新窗口的弹窗 */
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
+  const [form] = Form.useForm();
 
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
@@ -239,29 +244,74 @@ const TodoList: React.FC<TodoListProps> = (props) => {
     },
   ];
 
-  const handleMouseMove = (event: any) => {
-    console.log(event);
-    // const imgElment = event.target;
-    // if(imgElment.className.indexOf('checkbox_checked') !== -1){
-    //   // imgElment.className = imgElment.className.replace('checkbox_checked', 'checkbox_circle') 
-
-    // }else{
-    //   imgElment.className = imgElment.className.replace('checkbox_circle', 'checkbox_checked');
-    // }
+  const onFinish = (values: Record<string, any>) => {
+    const { dispatch } = props;
+    const { todo } = values;
+    if(!todo) return;
+    console.log('values: ', values);
+    const data: Task = {
+      id: Math.random().toString(),
+      title: todo,
+      status: 'InProgress',
+      important: false,
+    };
+    dispatch({
+      type: 'todoList/addTodo',
+      payload: data,
+    });
   };
 
+  const onFinishFailed = (errorInfo: any) => {
+    // eslint-disable-next-line no-console
+    console.log('Failed:', errorInfo);
+  };
+
+  const onKeyUp = (event:any) => {
+    if (event.charCode === 13) {
+      //form.submit();
+    }
+  }
+
+  const markTaskImportant = (index: number)  => {
+    dispatch({
+      type: 'todoList/markItemImportant',
+      payload: index
+    });
+  }
+
+  const markTaskStatus = (index: number)  => {
+    dispatch({
+      type: 'todoList/markItemStatus',
+      payload: index
+    });
+  }
 
   // const doneTaskIcon = <Image onMouseMove={handleMouseMove} className={styles.checkbox_checked} width={24} height={24} src={icon_checked} preview={false} />;
   // const inProgessTaskIcon = <Image onMouseMove={handleMouseMove} className={styles.checkbox_circle} width={24} height={24} src={icon_circle} preview={false} />;
-  const markAsDoneContent = <div>标记为已完成</div>;
-  const markAsInprogessContent = <div>标记为未完成</div>;
-  const doneTaskIcon = <Popover content={markAsInprogessContent} trigger="hover"><div onTouchMove={handleMouseMove}  className={styles.checkbox_checked}></div></Popover>
-  const inProgessTaskIcon =  <Popover content={markAsDoneContent} trigger="hover"><div onTouchMove={handleMouseMove} className={styles.checkbox_circle}></div></Popover>
+  const markAsDoneContent = '标记为已完成';
+  const markAsInprogessContent = '标记为未完成';
+  const doneTaskIcon = (index: number) => (<Popover content={markAsInprogessContent} trigger="hover"><div onClick={() => markTaskStatus(index)} className={styles.checkbox_checked}></div></Popover>)
+  const inProgessTaskIcon = (index: number) => (<Popover content={markAsDoneContent} trigger="hover"><div onClick={() => markTaskStatus(index)} className={styles.checkbox_circle}></div></Popover>)
   const inputContainerClasses = [styles.baseAdd, styles.baseAdd.addTask].join(' ');
 
   return (
     <PageContainer>
-      <Input prefix={<PlusOutlined style={{ 'fontSize': '1.2rem', 'color': 'grey', 'margin': '0 14px'}} />} className={styles.input_borderless} placeholder="添加任务" bordered={false} />
+      <Form
+          // style={{ marginTop: 8 }}
+          form={form}
+          name="basic"
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+        >
+          <FormItem
+            name="todo"
+            noStyle
+          >
+            {/* <Input placeholder={formatMessage({ id: 'formandbasic-form.title.placeholder' })} /> */}
+            <Input name="todo" prefix={<PlusOutlined style={{ 'fontSize': '1.2rem', 'color': 'grey', 'margin': '0 14px'}} />} className={styles.input_borderless} placeholder="添加任务" bordered={false} />
+          </FormItem>
+          </Form>
+      {/* <Input prefix={<PlusOutlined style={{ 'fontSize': '1.2rem', 'color': 'grey', 'margin': '0 14px'}} />} className={styles.input_borderless} placeholder="添加任务" bordered={false} /> */}
       <ProList<Task>
         // onRow={(record: any) => {
         //   return {
@@ -273,6 +323,7 @@ const TodoList: React.FC<TodoListProps> = (props) => {
         //     },
         //   };
         // }}
+
         toolBarRender={false}
         loading={loading}
         dataSource={list}
@@ -280,21 +331,27 @@ const TodoList: React.FC<TodoListProps> = (props) => {
         metas={{
           title: {
             dataIndex: 'title',
+            render: (_, record: Task) => (
+              record.status === 'InProgress' ?  <span>{record.title}</span> : <span style={{textDecoration:'line-through'}}>{record.title}</span>
+            )
           },
           avatar: {
-            render: (text: React.ReactNode,record: Task,index: number) => (
+            render: (text: React.ReactNode,record: Task, index: number) => (
               record.status === 'Done' ? 
-              doneTaskIcon
+              doneTaskIcon(index)
               : 
-              inProgessTaskIcon
+              inProgessTaskIcon(index)
             )
           },
           description: {
             dataIndex: 'status',
+            render: (_, record: Task) => (
+              record.status === 'InProgress' ?  <Badge color='blue' status="processing" text={intl.formatMessage({ id: 'pages.todo.list.status.inProgress' })} /> : <Badge color='green' text={intl.formatMessage({ id: 'pages.todo.list.status.done' })} />
+            )
           },
           actions: {
-            render: (_, task: Task) => {
-              return <a key="star" style={{'float': 'right'}}>{task.important ? <StarFilled  /> : <StarOutlined />}</a>
+            render: (_, task: Task, index: number) => {
+              return <a key="star" onClick={() => markTaskImportant(index)} style={{'float': 'right'}}>{task.important ? <StarFilled  /> : <StarOutlined />}</a>
             },
           },
         }}

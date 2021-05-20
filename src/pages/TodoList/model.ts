@@ -12,11 +12,17 @@ export interface ModelType {
   effects: {
     fetch: Effect;
     appendFetch: Effect;
+    addTodo: Effect;
+    markItemStatus: Effect;
+    markItemImportant: Effect;
     // submit: Effect;
   };
   reducers: {
     queryList: Reducer<StateType>;
     appendList: Reducer<StateType>;
+    addTodoItem: Reducer<StateType>;
+    markItemStatusReducer: Reducer<StateType>;
+    markItemAsImportant: Reducer<StateType>;
   };
 }
 
@@ -40,6 +46,24 @@ const Model: ModelType = {
       yield put({
         type: 'appendList',
         payload: Array.isArray(response) ? response : [],
+      });
+    },
+    *addTodo({ payload }, { call, put }) {
+      yield put({
+        type: 'addTodoItem',
+        payload: payload
+      });
+    },
+    *markItemStatus({ payload }, { call, put }) {
+      yield put({
+        type: 'markItemStatusReducer',
+        payload: payload
+      });
+    },
+    *markItemImportant({ payload }, { call, put }) {
+      yield put({
+        type: 'markItemAsImportant',
+        payload: payload
       });
     },
     // *submit({ payload }, { call, put }) {
@@ -69,6 +93,31 @@ const Model: ModelType = {
         ...state,
         list: state.list.concat(action.payload),
       };
+    },
+    addTodoItem(state = { list: [] }, action) {
+      state.list.splice(0, 0, action.payload);
+      // const newList = state.list.splice(0, 0, action.payload);
+      return {
+        ...state,
+        list: state.list,
+      }
+    },
+    markItemStatusReducer(state = { list: [] }, action) {
+      let marked = state.list.slice();
+      marked[action.payload].status = marked[action.payload].status  === 'InProgress' ? 'Done' : 'InProgress';
+      marked.sort((a, b) => b.status.length - a.status.length);
+      return {
+        ...state,
+        list: marked
+      }
+    },
+    markItemAsImportant(state = { list: []}, action) {
+      let marked = state.list.slice();
+      marked[action.payload].important = !marked[action.payload].important;
+      return {
+        ...state,
+        list: marked
+      }
     },
   },
 };

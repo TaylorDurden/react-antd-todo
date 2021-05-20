@@ -65,4 +65,6 @@ export default {
   'pages.searchTable.batchDeletion': '批量删除',
   'pages.searchTable.batchApproval': '批量审批',
   'pages.todo.list.title': '待办事项',
+  'pages.todo.list.status.inProgress': '进行中',
+  'pages.todo.list.status.done': '已完成',
 };
